@@ -77,7 +77,6 @@
   });
   $("#todolist").on("click", ".edit-todo", function(event){
     var id = event.target.parentNode.parentNode.id;
-    console.log(id);
     $.ajax({
       url: "todos/" + id + "/edit",
       method: "GET",
@@ -87,6 +86,24 @@
         var textColumn = $("#" + data["id"]).find(".my-title");
         textColumn.html($("#edit-template").html());
         textColumn.find(".update-title").val(data["title"]);
+        textColumn.on("click", ".update-button", function(updateEvent){
+          updateEvent.preventDefault();
+          $.ajax({
+            url: "todos/" + data["id"],
+            method: "PATCH",
+            dataType: "json",
+            data:{
+              todo: {
+                title: textColumn.find(".update-title").val()
+              }
+            },
+            success: function(updateData){
+              var textColumn = $("#" + data["id"]).find(".my-title");
+              textColumn.html('<p class="title my-font"></p>');
+              textColumn.find('p').html(updateData["title"]);
+            }
+          });
+        });
       }
     });
   });
